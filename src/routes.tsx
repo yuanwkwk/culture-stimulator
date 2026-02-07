@@ -5,6 +5,7 @@ import LibraryPage from './pages/LibraryPage';
 import CreatePage from './pages/CreatePage';
 import CreateCulturePage from './pages/CreateCulturePage';
 import MyCreationsPage from './pages/MyCreationsPage';
+import AdminReviewPage from './pages/AdminReviewPage';
 import type { ReactNode } from 'react';
 
 interface RouteConfig {
@@ -49,6 +50,11 @@ const routes: RouteConfig[] = [
     name: '我的创作',
     path: '/my-creations',
     element: <MyCreationsPage />
+  },
+  {
+    name: '内容审核',
+    path: '/admin/review',
+    element: <AdminReviewPage />
   }
 ];
 

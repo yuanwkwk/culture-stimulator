@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -18,12 +19,13 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { User, LogOut, Shield } from 'lucide-react';
+import { User, LogOut, Shield, FileCheck } from 'lucide-react';
 import { getCurrentUser, setCurrentUser, logout, type User as UserType } from '@/utils/user';
 import { useI18n } from '@/contexts/I18nContext';
 
 export default function UserMenu() {
   const { t } = useI18n();
+  const navigate = useNavigate();
   const [user, setUser] = useState<UserType | null>(getCurrentUser());
   const [open, setOpen] = useState(false);
   const [username, setUsername] = useState('');
@@ -62,6 +64,15 @@ export default function UserMenu() {
             )}
           </div>
           <DropdownMenuSeparator />
+          {user.isAdmin && (
+            <>
+              <DropdownMenuItem onClick={() => navigate('/admin/review')}>
+                <FileCheck className="w-4 h-4 mr-2" />
+                内容审核
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+            </>
+          )}
           <DropdownMenuItem onClick={handleLogout}>
             <LogOut className="w-4 h-4 mr-2" />
             {t.user.logout}
