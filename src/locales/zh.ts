@@ -22,6 +22,8 @@ export const zh = {
     game: '游戏',
     library: '内容库',
     create: '创作',
+    community: '社区',
+    myCreations: '我的创作',
   },
 
   // 首页
@@ -130,6 +132,102 @@ export const zh = {
     saveFailed: '保存失败',
     networkError: '网络错误',
     unknownError: '未知错误',
+    loginRequired: '请先登录',
+  },
+
+  // 创作中心
+  create: {
+    title: '创作中心',
+    subtitle: '创作你的文化故事',
+    description: '发挥创意，创作新的文化模板、事件和结局，与社区分享你的作品',
+    createCulture: '创作文化模板',
+    createEvent: '创作事件',
+    createEnding: '创作结局',
+    cultureTitle: '文化模板',
+    eventTitle: '事件',
+    endingTitle: '结局',
+    myCreations: '我的创作',
+    communityCreations: '社区创作',
+    pendingReview: '待审核',
+    approved: '已通过',
+    rejected: '已拒绝',
+    submit: '提交创作',
+    cancel: '取消',
+    preview: '预览',
+    
+    // 表单字段
+    cultureName: '文化名称',
+    cultureDescription: '文化描述',
+    era: '时代',
+    region: '地区',
+    specialAttributes: '特殊属性',
+    attributeName: '属性名称',
+    attributeDescription: '属性描述',
+    initialValue: '初始值',
+    addAttribute: '添加属性',
+    removeAttribute: '移除属性',
+    
+    eventTitleField: '事件标题',
+    eventDescriptionField: '事件描述',
+    selectCulture: '选择文化',
+    selectStage: '选择阶段',
+    choices: '选择项',
+    choiceText: '选择文本',
+    effects: '属性影响',
+    requirements: '触发条件',
+    addChoice: '添加选择',
+    removeChoice: '移除选择',
+    
+    endingTitleField: '结局标题',
+    endingDescriptionField: '结局描述',
+    achievementLevel: '成就等级',
+    conditions: '触发条件',
+    
+    // 提示信息
+    createSuccess: '创作提交成功，等待审核',
+    createFailed: '创作提交失败',
+    deleteSuccess: '删除成功',
+    deleteFailed: '删除失败',
+    reviewSuccess: '审核成功',
+    reviewFailed: '审核失败',
+    
+    // 统计
+    totalCreations: '总创作数',
+    approvedCount: '已通过',
+    pendingCount: '待审核',
+    rejectedCount: '已拒绝',
+  },
+
+  // 社区
+  community: {
+    title: '社区创作',
+    subtitle: '探索其他创作者的作品',
+    filterAll: '全部',
+    filterCulture: '文化模板',
+    filterEvent: '事件',
+    filterEnding: '结局',
+    createdBy: '创作者',
+    createdAt: '创建时间',
+    rating: '评分',
+    ratingCount: '评价数',
+    noRating: '暂无评价',
+    viewDetail: '查看详情',
+    rate: '评价',
+    yourRating: '你的评分',
+    comment: '评论',
+    submitRating: '提交评价',
+  },
+
+  // 用户
+  user: {
+    login: '登录',
+    logout: '登出',
+    username: '用户名',
+    enterUsername: '请输入用户名',
+    loginAsAdmin: '以管理员身份登录',
+    welcome: '欢迎',
+    notLoggedIn: '未登录',
+    loginPrompt: '登录后可以创作和评价内容',
   },
 };
 

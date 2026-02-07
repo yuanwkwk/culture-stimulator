@@ -117,3 +117,160 @@ export async function getGameStats() {
   if (error) throw error;
   return Array.isArray(data) ? data : [];
 }
+
+// ==================== 用户创作相关 ====================
+
+// 创建文化模板
+export async function createCultureTemplate(culture: Omit<CultureTemplate, 'id' | 'created_at' | 'updated_at'>) {
+  const { data, error } = await supabase
+    .from('culture_templates')
+    .insert({
+      ...culture,
+      status: 'pending',
+      is_official: false
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+// 创建事件
+export async function createEvent(event: Omit<Event, 'id' | 'created_at' | 'updated_at'>) {
+  const { data, error } = await supabase
+    .from('events')
+    .insert({
+      ...event,
+      status: 'pending',
+      is_official: false
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+// 创建结局
+export async function createEnding(ending: Omit<Ending, 'id' | 'created_at' | 'updated_at'>) {
+  const { data, error } = await supabase
+    .from('endings')
+    .insert({
+      ...ending,
+      status: 'pending',
+      is_official: false
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+// 获取用户的创作内容
+export async function getUserCreations(userId: string) {
+  const [cultures, events, endings] = await Promise.all([
+    supabase.from('culture_templates').select('*').eq('creator_id', userId).order('created_at', { ascending: false }),
+    supabase.from('events').select('*, culture:culture_templates(name)').eq('creator_id', userId).order('created_at', { ascending: false }),
+    supabase.from('endings').select('*, culture:culture_templates(name)').eq('creator_id', userId).order('created_at', { ascending: false })
+  ]);
+
+  return {
+    cultures: Array.isArray(cultures.data) ? cultures.data : [],
+    events: Array.isArray(events.data) ? events.data : [],
+    endings: Array.isArray(endings.data) ? endings.data : []
+  };
+}
+
+// 获取社区创作内容（已批准的用户创作）
+export async function getCommunityCreations() {
+  const [cultures, events, endings] = await Promise.all([
+    supabase
+      .from('culture_templates')
+      .select('*')
+      .eq('status', 'approved')
+      .eq('is_official', false)
+      .order('created_at', { ascending: false }),
+    supabase
+      .from('events')
+      .select('*, culture:culture_templates(name)')
+      .eq('status', 'approved')
+      .eq('is_official', false)
+      .order('created_at', { ascending: false }),
+    supabase
+      .from('endings')
+      .select('*, culture:culture_templates(name)')
+      .eq('status', 'approved')
+      .eq('is_official', false)
+      .order('created_at', { ascending: false })
+  ]);
+
+  return {
+    cultures: Array.isArray(cultures.data) ? cultures.data : [],
+    events: Array.isArray(events.data) ? events.data : [],
+    endings: Array.isArray(endings.data) ? endings.data : []
+  };
+}
+
+// 获取待审核内容（管理员功能）
+export async function getPendingCreations() {
+  const [cultures, events, endings] = await Promise.all([
+    supabase.from('culture_templates').select('*').eq('status', 'pending').order('created_at', { ascending: false }),
+    supabase.from('events').select('*, culture:culture_templates(name)').eq('status', 'pending').order('created_at', { ascending: false }),
+    supabase.from('endings').select('*, culture:culture_templates(name)').eq('status', 'pending').order('created_at', { ascending: false })
+  ]);
+
+  return {
+    cultures: Array.isArray(cultures.data) ? cultures.data : [],
+    events: Array.isArray(events.data) ? events.data : [],
+    endings: Array.isArray(endings.data) ? endings.data : []
+  };
+}
+
+// 审核内容
+export async function reviewContent(
+  type: 'culture' | 'event' | 'ending',
+  id: string,
+  status: 'approved' | 'rejected'
+) {
+  const tableName = type === 'culture' ? 'culture_templates' : type === 'event' ? 'events' : 'endings';
+  
+  const { error } = await supabase
+    .from(tableName)
+    .update({ status })
+    .eq('id', id);
+
+  if (error) throw error;
+}
+
+// 删除创作内容
+export async function deleteCreation(
+  type: 'culture' | 'event' | 'ending',
+  id: string
+) {
+  const tableName = type === 'culture' ? 'culture_templates' : type === 'event' ? 'events' : 'endings';
+  
+  const { error } = await supabase
+    .from(tableName)
+    .delete()
+    .eq('id', id);
+
+  if (error) throw error;
+}
+
+// 获取用户创作统计
+export async function getUserCreationStats(userId: string) {
+  const { cultures, events, endings } = await getUserCreations(userId);
+  
+  const allCreations = [...cultures, ...events, ...endings];
+  
+  return {
+    total_creations: allCreations.length,
+    approved_creations: allCreations.filter(c => c.status === 'approved').length,
+    pending_creations: allCreations.filter(c => c.status === 'pending').length,
+    rejected_creations: allCreations.filter(c => c.status === 'rejected').length,
+    total_ratings: 0, // TODO: 实现评分统计
+    average_rating: 0
+  };
+}

@@ -111,3 +111,39 @@ export const ACHIEVEMENT_LEVELS = {
   ordinary: { name: '普通', color: 'text-muted-foreground', description: '平凡一生' },
   poor: { name: '困顿', color: 'text-destructive', description: '潦倒终生' }
 };
+
+// 创作评价
+export interface CreationRating {
+  id: string;
+  content_type: 'culture' | 'event' | 'ending';
+  content_id: string;
+  user_id: string;
+  rating: number;
+  comment?: string;
+  created_at: string;
+}
+
+// 用户创作统计
+export interface UserCreationStats {
+  total_creations: number;
+  approved_creations: number;
+  pending_creations: number;
+  rejected_creations: number;
+  total_ratings: number;
+  average_rating: number;
+}
+
+// 创作内容（用于展示）
+export interface CreationContent {
+  id: string;
+  type: 'culture' | 'event' | 'ending';
+  title: string;
+  description: string;
+  creator_id: string;
+  creator_name?: string;
+  status: 'pending' | 'approved' | 'rejected';
+  created_at: string;
+  rating_count: number;
+  average_rating: number;
+  culture_name?: string; // 对于事件和结局，显示所属文化
+}

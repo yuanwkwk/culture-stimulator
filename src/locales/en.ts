@@ -24,6 +24,8 @@ export const en: TranslationKeys = {
     game: 'Game',
     library: 'Library',
     create: 'Create',
+    community: 'Community',
+    myCreations: 'My Creations',
   },
 
   // Home page
@@ -132,5 +134,101 @@ export const en: TranslationKeys = {
     saveFailed: 'Failed to save',
     networkError: 'Network error',
     unknownError: 'Unknown error',
+    loginRequired: 'Please login first',
+  },
+
+  // Create Center
+  create: {
+    title: 'Creation Center',
+    subtitle: 'Create Your Cultural Stories',
+    description: 'Unleash your creativity, create new culture templates, events and endings, and share your works with the community',
+    createCulture: 'Create Culture Template',
+    createEvent: 'Create Event',
+    createEnding: 'Create Ending',
+    cultureTitle: 'Culture Template',
+    eventTitle: 'Event',
+    endingTitle: 'Ending',
+    myCreations: 'My Creations',
+    communityCreations: 'Community Creations',
+    pendingReview: 'Pending Review',
+    approved: 'Approved',
+    rejected: 'Rejected',
+    submit: 'Submit Creation',
+    cancel: 'Cancel',
+    preview: 'Preview',
+    
+    // Form fields
+    cultureName: 'Culture Name',
+    cultureDescription: 'Culture Description',
+    era: 'Era',
+    region: 'Region',
+    specialAttributes: 'Special Attributes',
+    attributeName: 'Attribute Name',
+    attributeDescription: 'Attribute Description',
+    initialValue: 'Initial Value',
+    addAttribute: 'Add Attribute',
+    removeAttribute: 'Remove Attribute',
+    
+    eventTitleField: 'Event Title',
+    eventDescriptionField: 'Event Description',
+    selectCulture: 'Select Culture',
+    selectStage: 'Select Stage',
+    choices: 'Choices',
+    choiceText: 'Choice Text',
+    effects: 'Attribute Effects',
+    requirements: 'Requirements',
+    addChoice: 'Add Choice',
+    removeChoice: 'Remove Choice',
+    
+    endingTitleField: 'Ending Title',
+    endingDescriptionField: 'Ending Description',
+    achievementLevel: 'Achievement Level',
+    conditions: 'Conditions',
+    
+    // Messages
+    createSuccess: 'Creation submitted successfully, pending review',
+    createFailed: 'Failed to submit creation',
+    deleteSuccess: 'Deleted successfully',
+    deleteFailed: 'Failed to delete',
+    reviewSuccess: 'Review successful',
+    reviewFailed: 'Review failed',
+    
+    // Statistics
+    totalCreations: 'Total Creations',
+    approvedCount: 'Approved',
+    pendingCount: 'Pending',
+    rejectedCount: 'Rejected',
+  },
+
+  // Community
+  community: {
+    title: 'Community Creations',
+    subtitle: 'Explore works from other creators',
+    filterAll: 'All',
+    filterCulture: 'Culture Templates',
+    filterEvent: 'Events',
+    filterEnding: 'Endings',
+    createdBy: 'Creator',
+    createdAt: 'Created At',
+    rating: 'Rating',
+    ratingCount: 'Ratings',
+    noRating: 'No ratings yet',
+    viewDetail: 'View Details',
+    rate: 'Rate',
+    yourRating: 'Your Rating',
+    comment: 'Comment',
+    submitRating: 'Submit Rating',
+  },
+
+  // User
+  user: {
+    login: 'Login',
+    logout: 'Logout',
+    username: 'Username',
+    enterUsername: 'Enter username',
+    loginAsAdmin: 'Login as Admin',
+    welcome: 'Welcome',
+    notLoggedIn: 'Not logged in',
+    loginPrompt: 'Login to create and rate content',
   },
 };

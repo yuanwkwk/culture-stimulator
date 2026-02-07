@@ -2,6 +2,9 @@ import HomePage from './pages/HomePage';
 import GamePage from './pages/GamePage';
 import EndingPage from './pages/EndingPage';
 import LibraryPage from './pages/LibraryPage';
+import CreatePage from './pages/CreatePage';
+import CreateCulturePage from './pages/CreateCulturePage';
+import MyCreationsPage from './pages/MyCreationsPage';
 import type { ReactNode } from 'react';
 
 interface RouteConfig {
@@ -31,6 +34,21 @@ const routes: RouteConfig[] = [
     name: '内容库',
     path: '/library',
     element: <LibraryPage />
+  },
+  {
+    name: '创作中心',
+    path: '/create',
+    element: <CreatePage />
+  },
+  {
+    name: '创作文化',
+    path: '/create/culture',
+    element: <CreateCulturePage />
+  },
+  {
+    name: '我的创作',
+    path: '/my-creations',
+    element: <MyCreationsPage />
   }
 ];
 

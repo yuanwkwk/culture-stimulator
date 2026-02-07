@@ -4,9 +4,10 @@ import { getCultureTemplates } from '@/db/api';
 import type { CultureTemplate } from '@/types/game';
 import CultureCard from '@/components/game/CultureCard';
 import LanguageSwitcher from '@/components/common/LanguageSwitcher';
+import UserMenu from '@/components/common/UserMenu';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { BookOpen, Sparkles } from 'lucide-react';
+import { BookOpen, Sparkles, Pencil } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useI18n } from '@/contexts/I18nContext';
 
@@ -51,12 +52,22 @@ export default function HomePage() {
               <Button
                 variant="outline"
                 size="sm"
+                onClick={() => navigate('/create')}
+                className="hidden md:flex"
+              >
+                <Pencil className="w-4 h-4 mr-2" />
+                {t.nav.create}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={() => navigate('/library')}
                 className="hidden md:flex"
               >
                 <Sparkles className="w-4 h-4 mr-2" />
                 {t.home.libraryButton}
               </Button>
+              <UserMenu />
               <LanguageSwitcher />
             </div>
           </div>
