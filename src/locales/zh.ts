@@ -32,6 +32,7 @@ export const zh = {
     subtitle: '选择你的文化背景',
     description: '体验不同文化背景下的人生故事，做出选择，书写属于你的传奇',
     selectCulture: '选择文化',
+    selectCultureDesc: '开始你的人生模拟之旅',
     official: '官方',
     startGame: '开始游戏',
     libraryButton: '内容库',

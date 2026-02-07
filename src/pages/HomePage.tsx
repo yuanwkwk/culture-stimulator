@@ -6,10 +6,12 @@ import CultureCard from '@/components/game/CultureCard';
 import LanguageSwitcher from '@/components/common/LanguageSwitcher';
 import UserMenu from '@/components/common/UserMenu';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { BookOpen, Sparkles, Pencil } from 'lucide-react';
+import { BookOpen, Sparkles, Pencil, FileText, Calendar, Trophy, Users } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useI18n } from '@/contexts/I18nContext';
+import { isLoggedIn } from '@/utils/user';
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -90,6 +92,106 @@ export default function HomePage() {
           </p>
         </motion.div>
 
+        {/* 创作入口快捷卡片 */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="mb-8 md:mb-12"
+        >
+          <Card className="border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-secondary/5">
+            <CardHeader className="pb-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-xl md:text-2xl flex items-center gap-2">
+                    <Pencil className="w-5 h-5 md:w-6 md:h-6 text-primary" />
+                    {t.create.title}
+                  </CardTitle>
+                  <CardDescription className="mt-2">
+                    {isLoggedIn() 
+                      ? t.create.description 
+                      : t.user.loginPrompt}
+                  </CardDescription>
+                </div>
+                {isLoggedIn() && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => navigate('/my-creations')}
+                    className="hidden md:flex"
+                  >
+                    <Users className="w-4 h-4 mr-2" />
+                    {t.create.myCreations}
+                  </Button>
+                )}
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+                <Button
+                  variant="outline"
+                  className="h-auto py-4 flex flex-col items-start gap-2 hover:border-primary hover:bg-primary/5"
+                  onClick={() => isLoggedIn() ? navigate('/create/culture') : navigate('/')}
+                >
+                  <div className="flex items-center gap-2 w-full">
+                    <FileText className="w-5 h-5 text-chart-1" />
+                    <span className="font-semibold">{t.create.createCulture}</span>
+                  </div>
+                  <span className="text-xs text-muted-foreground text-left">
+                    创作全新的文化背景模板
+                  </span>
+                </Button>
+
+                <Button
+                  variant="outline"
+                  className="h-auto py-4 flex flex-col items-start gap-2 hover:border-primary hover:bg-primary/5"
+                  onClick={() => isLoggedIn() ? navigate('/create/event') : navigate('/')}
+                >
+                  <div className="flex items-center gap-2 w-full">
+                    <Calendar className="w-5 h-5 text-chart-2" />
+                    <span className="font-semibold">{t.create.createEvent}</span>
+                  </div>
+                  <span className="text-xs text-muted-foreground text-left">
+                    为文化创作人生事件
+                  </span>
+                </Button>
+
+                <Button
+                  variant="outline"
+                  className="h-auto py-4 flex flex-col items-start gap-2 hover:border-primary hover:bg-primary/5"
+                  onClick={() => isLoggedIn() ? navigate('/create/ending') : navigate('/')}
+                >
+                  <div className="flex items-center gap-2 w-full">
+                    <Trophy className="w-5 h-5 text-chart-3" />
+                    <span className="font-semibold">{t.create.createEnding}</span>
+                  </div>
+                  <span className="text-xs text-muted-foreground text-left">
+                    创作人生结局
+                  </span>
+                </Button>
+              </div>
+
+              {!isLoggedIn() && (
+                <div className="mt-4 text-center">
+                  <p className="text-sm text-muted-foreground">
+                    💡 {t.user.loginPrompt}
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* 文化模板列表标题 */}
+        <div className="mb-6">
+          <h3 className="text-xl md:text-2xl font-bold text-foreground">
+            {t.home.selectCulture || '选择文化背景'}
+          </h3>
+          <p className="text-sm text-muted-foreground mt-1">
+            {t.home.selectCultureDesc || '开始你的人生模拟之旅'}
+          </p>
+        </div>
+
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {[1, 2, 3].map(i => (
@@ -109,7 +211,7 @@ export default function HomePage() {
                 key={culture.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                transition={{ duration: 0.5, delay: index * 0.1 + 0.3 }}
               >
                 <CultureCard
                   culture={culture}

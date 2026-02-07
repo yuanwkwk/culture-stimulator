@@ -34,6 +34,7 @@ export const en: TranslationKeys = {
     subtitle: 'Choose Your Cultural Background',
     description: 'Experience life stories from different cultural backgrounds, make choices, and write your own legend',
     selectCulture: 'Select Culture',
+    selectCultureDesc: 'Start your life simulation journey',
     official: 'Official',
     startGame: 'Start Game',
     libraryButton: 'Library',
