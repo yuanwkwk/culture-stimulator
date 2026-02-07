@@ -11,10 +11,12 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowLeft, Home } from 'lucide-react';
 import { STAGE_INFO } from '@/types/game';
 import { motion } from 'motion/react';
+import { useI18n } from '@/contexts/I18nContext';
 
 export default function GamePage() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useI18n();
   const culture = location.state?.culture as CultureTemplate;
 
   const [gameEngine, setGameEngine] = useState<GameEngine | null>(null);
@@ -100,6 +102,7 @@ export default function GamePage() {
   }
 
   const state = gameEngine?.getState();
+  const stageName = state ? t.stages[state.stage] : '';
 
   return (
     <div className="min-h-screen bg-background">
@@ -113,7 +116,7 @@ export default function GamePage() {
               onClick={() => navigate('/')}
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              返回
+              {t.common.back}
             </Button>
             <h1 className="text-lg md:text-xl font-bold text-foreground">
               {culture.name}
@@ -148,7 +151,7 @@ export default function GamePage() {
                 <AttributePanel
                   attributes={state.attributes}
                   age={state.age}
-                  stage={STAGE_INFO[state.stage].name}
+                  stage={stageName}
                 />
               </div>
             ) : (
@@ -169,7 +172,7 @@ export default function GamePage() {
               />
             ) : (
               <div className="text-center py-12">
-                <p className="text-muted-foreground">加载中...</p>
+                <p className="text-muted-foreground">{t.common.loading}</p>
               </div>
             )}
           </div>
@@ -183,14 +186,16 @@ export default function GamePage() {
             transition={{ delay: 0.3 }}
             className="mt-8"
           >
-            <h3 className="text-lg font-semibold mb-4 text-foreground">人生轨迹</h3>
+            <h3 className="text-lg font-semibold mb-4 text-foreground">{t.game.lifeTrajectory}</h3>
             <div className="space-y-2">
               {state.eventHistory.slice(-5).reverse().map((item, index) => (
                 <div
                   key={index}
                   className="text-sm text-muted-foreground bg-card/50 p-3 rounded-lg border border-border"
                 >
-                  <span className="font-medium text-foreground">{item.age}岁：</span>
+                  <span className="font-medium text-foreground">
+                    {item.age}{t.game.years}：
+                  </span>
                   {item.event.title} - {item.choice.text}
                 </div>
               ))}

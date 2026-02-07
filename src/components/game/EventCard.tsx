@@ -2,6 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import type { Event, Choice } from '@/types/game';
 import { motion } from 'motion/react';
+import { useI18n } from '@/contexts/I18nContext';
 
 interface EventCardProps {
   event: Event;
@@ -11,11 +12,14 @@ interface EventCardProps {
 }
 
 export default function EventCard({ event, age, onChoice, disabled }: EventCardProps) {
+  const { t } = useI18n();
+
   const getEffectText = (effects: Record<string, number>) => {
     return Object.entries(effects)
       .map(([key, value]) => {
+        const translatedKey = t.attributes[key as keyof typeof t.attributes] || key;
         const sign = value > 0 ? '+' : '';
-        return `${key}${sign}${value}`;
+        return `${translatedKey}${sign}${value}`;
       })
       .join('、');
   };
@@ -32,7 +36,7 @@ export default function EventCard({ event, age, onChoice, disabled }: EventCardP
             <div className="flex-1">
               <CardTitle className="text-xl md:text-2xl mb-2">{event.title}</CardTitle>
               <CardDescription className="text-sm text-muted-foreground">
-                {age}岁
+                {age}{t.game.years}
               </CardDescription>
             </div>
           </div>
@@ -43,7 +47,7 @@ export default function EventCard({ event, age, onChoice, disabled }: EventCardP
           </p>
 
           <div className="space-y-3 pt-2">
-            <p className="text-sm font-semibold text-muted-foreground">你的选择：</p>
+            <p className="text-sm font-semibold text-muted-foreground">{t.game.yourChoice}</p>
             {event.choices.map((choice: Choice, index: number) => (
               <Button
                 key={index}

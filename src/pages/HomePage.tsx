@@ -3,13 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import { getCultureTemplates } from '@/db/api';
 import type { CultureTemplate } from '@/types/game';
 import CultureCard from '@/components/game/CultureCard';
+import LanguageSwitcher from '@/components/common/LanguageSwitcher';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { BookOpen, Sparkles } from 'lucide-react';
 import { motion } from 'motion/react';
+import { useI18n } from '@/contexts/I18nContext';
 
 export default function HomePage() {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const [cultures, setCultures] = useState<CultureTemplate[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -41,18 +44,21 @@ export default function HomePage() {
             <div className="flex items-center gap-2">
               <BookOpen className="w-6 h-6 md:w-8 md:h-8 text-primary" />
               <h1 className="text-xl md:text-3xl font-bold gradient-text">
-                文化人生模拟器
+                {t.home.title}
               </h1>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate('/library')}
-              className="hidden md:flex"
-            >
-              <Sparkles className="w-4 h-4 mr-2" />
-              内容库
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate('/library')}
+                className="hidden md:flex"
+              >
+                <Sparkles className="w-4 h-4 mr-2" />
+                {t.home.libraryButton}
+              </Button>
+              <LanguageSwitcher />
+            </div>
           </div>
         </div>
       </header>
@@ -66,10 +72,10 @@ export default function HomePage() {
           className="text-center mb-8 md:mb-12"
         >
           <h2 className="text-2xl md:text-4xl font-bold mb-3 md:mb-4 text-foreground">
-            选择你的文化背景
+            {t.home.subtitle}
           </h2>
           <p className="text-sm md:text-lg text-muted-foreground max-w-2xl mx-auto">
-            体验不同文化背景下的人生故事，做出选择，书写属于你的传奇
+            {t.home.description}
           </p>
         </motion.div>
 
@@ -83,7 +89,7 @@ export default function HomePage() {
           </div>
         ) : cultures.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-muted-foreground">暂无可用的文化模板</p>
+            <p className="text-muted-foreground">{t.common.noData}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
@@ -111,7 +117,7 @@ export default function HomePage() {
             className="rounded-full shadow-lg"
           >
             <Sparkles className="w-5 h-5 mr-2" />
-            内容库
+            {t.home.libraryButton}
           </Button>
         </div>
       </main>
@@ -119,7 +125,7 @@ export default function HomePage() {
       {/* 页脚 */}
       <footer className="border-t border-border mt-12 py-6">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p>© 2026 文化人生模拟器 · 体验不同文化的人生故事</p>
+          <p>{t.footer.copyright}</p>
         </div>
       </footer>
     </div>

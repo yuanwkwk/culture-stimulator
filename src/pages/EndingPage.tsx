@@ -4,10 +4,12 @@ import EndingDisplay from '@/components/game/EndingDisplay';
 import { Button } from '@/components/ui/button';
 import { Home, RotateCcw } from 'lucide-react';
 import { motion } from 'motion/react';
+import { useI18n, interpolate } from '@/contexts/I18nContext';
 
 export default function EndingPage() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useI18n();
 
   const ending = location.state?.ending as Ending;
   const attributes = location.state?.attributes as PlayerAttributes;
@@ -43,10 +45,10 @@ export default function EndingPage() {
           className="text-center mb-8"
         >
           <h1 className="text-3xl md:text-5xl font-bold mb-3 gradient-text">
-            人生落幕
+            {t.ending.title}
           </h1>
           <p className="text-muted-foreground">
-            这就是你在{culture?.name || '此文化'}中的一生
+            {interpolate(t.ending.subtitle, { culture: culture?.name || '' })}
           </p>
         </motion.div>
 
@@ -70,7 +72,7 @@ export default function EndingPage() {
             className="w-full md:w-auto"
           >
             <RotateCcw className="w-5 h-5 mr-2" />
-            再次体验
+            {t.ending.playAgain}
           </Button>
           <Button
             size="lg"
@@ -79,7 +81,7 @@ export default function EndingPage() {
             className="w-full md:w-auto"
           >
             <Home className="w-5 h-5 mr-2" />
-            返回首页
+            {t.ending.backHome}
           </Button>
         </motion.div>
 
@@ -91,7 +93,7 @@ export default function EndingPage() {
           className="text-center mt-12"
         >
           <p className="text-sm text-muted-foreground">
-            你的人生故事已保存，感谢体验
+            {t.ending.saved}
           </p>
         </motion.div>
       </main>

@@ -8,9 +8,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowLeft, TrendingUp, Users, BookOpen } from 'lucide-react';
 import { motion } from 'motion/react';
+import { useI18n, interpolate } from '@/contexts/I18nContext';
 
 export default function LibraryPage() {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const [cultures, setCultures] = useState<CultureTemplate[]>([]);
   const [stats, setStats] = useState<GameSession[]>([]);
   const [loading, setLoading] = useState(true);
@@ -55,10 +57,10 @@ export default function LibraryPage() {
               onClick={() => navigate('/')}
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              返回
+              {t.common.back}
             </Button>
             <h1 className="text-xl md:text-2xl font-bold gradient-text">
-              内容库
+              {t.library.title}
             </h1>
             <div className="w-20" />
           </div>
@@ -70,11 +72,11 @@ export default function LibraryPage() {
           <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8">
             <TabsTrigger value="cultures">
               <BookOpen className="w-4 h-4 mr-2" />
-              文化模板
+              {t.library.cultures}
             </TabsTrigger>
             <TabsTrigger value="stats">
               <TrendingUp className="w-4 h-4 mr-2" />
-              统计数据
+              {t.library.stats}
             </TabsTrigger>
           </TabsList>
 
@@ -84,7 +86,7 @@ export default function LibraryPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <h2 className="text-2xl font-bold mb-4 text-foreground">可用文化模板</h2>
+              <h2 className="text-2xl font-bold mb-4 text-foreground">{t.library.availableCultures}</h2>
               {loading ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {[1, 2].map(i => (
@@ -116,11 +118,13 @@ export default function LibraryPage() {
                             <div className="flex items-center gap-4 text-sm text-muted-foreground">
                               <div className="flex items-center gap-1">
                                 <Users className="w-4 h-4" />
-                                <span>{cultureStats.playCount} 次游玩</span>
+                                <span>{cultureStats.playCount} {t.library.playCount}</span>
                               </div>
                               {cultureStats.avgPlayTime > 0 && (
                                 <div>
-                                  <span>平均 {cultureStats.avgPlayTime} 个事件</span>
+                                  <span>
+                                    {interpolate(t.library.avgEvents, { count: cultureStats.avgPlayTime })}
+                                  </span>
                                 </div>
                               )}
                             </div>
@@ -140,12 +144,12 @@ export default function LibraryPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <h2 className="text-2xl font-bold mb-4 text-foreground">游戏统计</h2>
+              <h2 className="text-2xl font-bold mb-4 text-foreground">{t.library.gameStats}</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                 <Card>
                   <CardHeader className="pb-3">
                     <CardTitle className="text-sm font-medium text-muted-foreground">
-                      总游玩次数
+                      {t.library.totalPlays}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -155,7 +159,7 @@ export default function LibraryPage() {
                 <Card>
                   <CardHeader className="pb-3">
                     <CardTitle className="text-sm font-medium text-muted-foreground">
-                      文化模板数
+                      {t.library.cultureCount}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -165,7 +169,7 @@ export default function LibraryPage() {
                 <Card>
                   <CardHeader className="pb-3">
                     <CardTitle className="text-sm font-medium text-muted-foreground">
-                      平均游戏时长
+                      {t.library.avgPlayTime}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -174,19 +178,19 @@ export default function LibraryPage() {
                         ? Math.round(stats.reduce((sum, s) => sum + s.play_time, 0) / stats.length)
                         : 0}
                     </p>
-                    <p className="text-xs text-muted-foreground">个事件</p>
+                    <p className="text-xs text-muted-foreground">{t.library.events}</p>
                   </CardContent>
                 </Card>
               </div>
 
               {stats.length === 0 ? (
                 <div className="text-center py-12">
-                  <p className="text-muted-foreground">暂无游戏记录</p>
+                  <p className="text-muted-foreground">{t.common.noData}</p>
                 </div>
               ) : (
                 <Card>
                   <CardHeader>
-                    <CardTitle>最近游戏记录</CardTitle>
+                    <CardTitle>{t.library.recentGames}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
@@ -197,15 +201,15 @@ export default function LibraryPage() {
                         >
                           <div className="flex-1">
                             <p className="text-sm font-medium text-foreground">
-                              游戏 #{index + 1}
+                              {t.library.game} #{index + 1}
                             </p>
                             <p className="text-xs text-muted-foreground">
-                              {new Date(session.created_at).toLocaleDateString('zh-CN')}
+                              {new Date(session.created_at).toLocaleDateString()}
                             </p>
                           </div>
                           <div className="text-right">
                             <p className="text-sm font-bold text-primary">
-                              {session.play_time} 个事件
+                              {session.play_time} {t.library.events}
                             </p>
                           </div>
                         </div>

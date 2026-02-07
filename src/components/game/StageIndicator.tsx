@@ -1,11 +1,13 @@
-import { STAGE_INFO, type Stage } from '@/types/game';
+import { type Stage } from '@/types/game';
 import { motion } from 'motion/react';
+import { useI18n } from '@/contexts/I18nContext';
 
 interface StageIndicatorProps {
   currentStage: Stage;
 }
 
 export default function StageIndicator({ currentStage }: StageIndicatorProps) {
+  const { t } = useI18n();
   const stages: Stage[] = ['childhood', 'youth', 'adult', 'elder'];
   const currentIndex = stages.indexOf(currentStage);
 
@@ -13,7 +15,6 @@ export default function StageIndicator({ currentStage }: StageIndicatorProps) {
     <div className="w-full py-4">
       <div className="flex items-center justify-between max-w-2xl mx-auto">
         {stages.map((stage, index) => {
-          const info = STAGE_INFO[stage];
           const isActive = index === currentIndex;
           const isPast = index < currentIndex;
           const isFuture = index > currentIndex;
@@ -36,10 +37,10 @@ export default function StageIndicator({ currentStage }: StageIndicatorProps) {
                 </motion.div>
                 <div className="mt-2 text-center">
                   <p className={`text-xs md:text-sm font-medium ${isActive ? 'text-primary' : 'text-muted-foreground'}`}>
-                    {info.name}
+                    {t.stages[stage]}
                   </p>
                   <p className="text-xs text-muted-foreground hidden md:block">
-                    {info.ageRange}
+                    {t.stages[`${stage}Age` as keyof typeof t.stages]}
                   </p>
                 </div>
               </div>

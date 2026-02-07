@@ -2,6 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import type { CultureTemplate } from '@/types/game';
 import { motion } from 'motion/react';
+import { useI18n } from '@/contexts/I18nContext';
 
 interface CultureCardProps {
   culture: CultureTemplate;
@@ -9,6 +10,8 @@ interface CultureCardProps {
 }
 
 export default function CultureCard({ culture, onClick }: CultureCardProps) {
+  const { t } = useI18n();
+
   return (
     <motion.div
       whileHover={{ scale: 1.02 }}
@@ -23,7 +26,7 @@ export default function CultureCard({ culture, onClick }: CultureCardProps) {
           <div className="flex items-start justify-between">
             <CardTitle className="text-xl md:text-2xl">{culture.name}</CardTitle>
             {culture.is_official && (
-              <Badge variant="secondary" className="ml-2">官方</Badge>
+              <Badge variant="secondary" className="ml-2">{t.home.official}</Badge>
             )}
           </div>
           <CardDescription className="text-sm">
@@ -38,7 +41,7 @@ export default function CultureCard({ culture, onClick }: CultureCardProps) {
             <div className="flex flex-wrap gap-2 mt-3">
               {culture.special_attributes.map((attr, index) => (
                 <Badge key={index} variant="outline" className="text-xs">
-                  {attr.name}
+                  {t.attributes[attr.name as keyof typeof t.attributes] || attr.name}
                 </Badge>
               ))}
             </div>
