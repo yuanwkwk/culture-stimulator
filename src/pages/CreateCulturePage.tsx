@@ -192,6 +192,9 @@ export default function CreateCulturePage() {
       if (!ending.title || !ending.description) {
         return '所有结局必须填写标题和描述';
       }
+      if (Object.keys(ending.conditions).length === 0) {
+        return `结局"${ending.title}"必须设置至少一个触发条件`;
+      }
     }
 
     return null;
@@ -457,17 +460,17 @@ export default function CreateCulturePage() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="childhood">童年期</SelectItem>
-                        <SelectItem value="youth">青少年期</SelectItem>
-                        <SelectItem value="adult">成年期</SelectItem>
-                        <SelectItem value="elder">晚年期</SelectItem>
+                        <SelectItem value="childhood">童年期 (0-12岁)</SelectItem>
+                        <SelectItem value="youth">青少年期 (13-20岁)</SelectItem>
+                        <SelectItem value="adult">成年期 (21-50岁)</SelectItem>
+                        <SelectItem value="elder">晚年期 (51岁+)</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground mb-4">
-                    为当前阶段添加事件。每个阶段至少需要1个事件，建议3-5个。
+                    为当前阶段添加事件。每个阶段至少需要1个事件，建议3-5个。事件会根据触发条件和随机性在游戏中出现。
                   </p>
                   <Button onClick={addEvent} variant="outline" className="w-full">
                     <Plus className="w-4 h-4 mr-2" />
@@ -480,16 +483,20 @@ export default function CreateCulturePage() {
               <div className="space-y-4">
                 {getEventsByStage(currentStage).map((event, idx) => {
                   const globalIndex = events.findIndex(e => e === event);
+                  const availableAttributes = ['学识', '技艺', '财富', '声望', '健康', ...specialAttributes.filter(a => a.name).map(a => a.name)];
+                  
                   return (
-                    <Card key={globalIndex} className="p-4">
-                      <div className="space-y-4">
+                    <Card key={globalIndex} className="border-2">
+                      <CardHeader>
                         <div className="flex items-center justify-between">
-                          <span className="font-medium">事件 {idx + 1}</span>
+                          <span className="font-bold text-lg">事件 {idx + 1}</span>
                           <Button variant="ghost" size="sm" onClick={() => removeEvent(globalIndex)}>
                             <X className="w-4 h-4" />
                           </Button>
                         </div>
-                        
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        {/* 事件标题 */}
                         <div className="space-y-2">
                           <Label>事件标题 *</Label>
                           <Input
@@ -499,48 +506,127 @@ export default function CreateCulturePage() {
                           />
                         </div>
 
+                        {/* 事件描述 */}
                         <div className="space-y-2">
                           <Label>事件描述 *</Label>
                           <Textarea
                             value={event.description}
                             onChange={(e) => updateEvent(globalIndex, 'description', e.target.value)}
-                            placeholder="描述这个事件..."
-                            rows={2}
+                            placeholder="描述这个事件的情景和背景..."
+                            rows={3}
                           />
                         </div>
 
+                        {/* 触发条件 */}
                         <div className="space-y-2">
+                          <Label>触发条件（可选）</Label>
+                          <p className="text-xs text-muted-foreground">
+                            设置属性的最低要求，满足所有条件才会触发此事件。留空表示无条件触发。
+                          </p>
+                          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 p-3 bg-muted/30 rounded-lg">
+                            {availableAttributes.map(attr => (
+                              <div key={attr} className="flex items-center gap-2">
+                                <Label className="text-xs whitespace-nowrap min-w-12">{attr}≥</Label>
+                                <Input
+                                  type="number"
+                                  value={event.requirements[attr] || ''}
+                                  onChange={(e) => {
+                                    const requirements = { ...event.requirements };
+                                    const val = parseInt(e.target.value) || 0;
+                                    if (val > 0) {
+                                      requirements[attr] = val;
+                                    } else {
+                                      delete requirements[attr];
+                                    }
+                                    updateEvent(globalIndex, 'requirements', requirements);
+                                  }}
+                                  placeholder="0"
+                                  className="h-8"
+                                  min={0}
+                                  max={100}
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* 选择项列表 */}
+                        <div className="space-y-3">
                           <div className="flex items-center justify-between">
-                            <Label>选择项 (至少2个)</Label>
-                            <Button size="sm" variant="outline" onClick={() => addChoice(globalIndex)}>
+                            <Label>选择项 * (至少2个)</Label>
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="outline"
+                              onClick={() => addChoice(globalIndex)}
+                            >
                               <Plus className="w-3 h-3 mr-1" />
                               添加选择
                             </Button>
                           </div>
+
                           {event.choices.map((choice, choiceIdx) => (
-                            <Card key={choiceIdx} className="p-3 bg-muted/30">
-                              <div className="space-y-2">
+                            <Card key={choiceIdx} className="p-4 bg-muted/20">
+                              <div className="space-y-3">
                                 <div className="flex items-center justify-between">
-                                  <span className="text-sm">选择 {choiceIdx + 1}</span>
+                                  <span className="text-sm font-semibold">选择 {choiceIdx + 1}</span>
                                   {event.choices.length > 2 && (
-                                    <Button size="sm" variant="ghost" onClick={() => removeChoice(globalIndex, choiceIdx)}>
+                                    <Button
+                                      type="button"
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => removeChoice(globalIndex, choiceIdx)}
+                                    >
                                       <X className="w-3 h-3" />
                                     </Button>
                                   )}
                                 </div>
-                                <Input
-                                  value={choice.text}
-                                  onChange={(e) => updateChoice(globalIndex, choiceIdx, 'text', e.target.value)}
-                                  placeholder="选择的文本"
-                                />
-                                <p className="text-xs text-muted-foreground">
-                                  属性影响：在提交前可以在代码中设置
-                                </p>
+
+                                {/* 选择文本 */}
+                                <div className="space-y-1">
+                                  <Label className="text-xs">选择文本 *</Label>
+                                  <Input
+                                    value={choice.text}
+                                    onChange={(e) => updateChoice(globalIndex, choiceIdx, 'text', e.target.value)}
+                                    placeholder="例如：努力学习，准备考试"
+                                  />
+                                </div>
+
+                                {/* 属性影响 */}
+                                <div className="space-y-2">
+                                  <Label className="text-xs">属性影响</Label>
+                                  <p className="text-xs text-muted-foreground">
+                                    设置选择此项后对属性的影响。正数增加，负数减少。
+                                  </p>
+                                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2 p-2 bg-background rounded">
+                                    {availableAttributes.map(attr => (
+                                      <div key={attr} className="flex items-center gap-1">
+                                        <Label className="text-xs whitespace-nowrap min-w-12">{attr}</Label>
+                                        <Input
+                                          type="number"
+                                          value={choice.effects[attr] || ''}
+                                          onChange={(e) => {
+                                            const effects = { ...choice.effects };
+                                            const val = parseInt(e.target.value) || 0;
+                                            if (val !== 0) {
+                                              effects[attr] = val;
+                                            } else {
+                                              delete effects[attr];
+                                            }
+                                            updateChoice(globalIndex, choiceIdx, 'effects', effects);
+                                          }}
+                                          placeholder="±0"
+                                          className="h-7 text-xs"
+                                        />
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
                               </div>
                             </Card>
                           ))}
                         </div>
-                      </div>
+                      </CardContent>
                     </Card>
                   );
                 })}
@@ -561,7 +647,7 @@ export default function CreateCulturePage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground mb-4">
-                    创作不同的人生结局。至少需要3个结局，建议5-8个，涵盖不同的成就等级。
+                    创作不同的人生结局。至少需要3个结局，建议5-8个，涵盖不同的成就等级。结局会根据玩家的最终属性自动匹配。
                   </p>
                   <Button onClick={addEnding} variant="outline" className="w-full">
                     <Plus className="w-4 h-4 mr-2" />
@@ -571,60 +657,135 @@ export default function CreateCulturePage() {
               </Card>
 
               <div className="space-y-4">
-                {endings.map((ending, index) => (
-                  <Card key={index} className="p-4">
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium">结局 {index + 1}</span>
-                        <Button variant="ghost" size="sm" onClick={() => removeEnding(index)}>
-                          <X className="w-4 h-4" />
-                        </Button>
-                      </div>
+                {endings.map((ending, index) => {
+                  const availableAttributes = ['学识', '技艺', '财富', '声望', '健康', ...specialAttributes.filter(a => a.name).map(a => a.name)];
+                  
+                  return (
+                    <Card key={index} className="border-2">
+                      <CardHeader>
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-lg">结局 {index + 1}</span>
+                          <Button variant="ghost" size="sm" onClick={() => removeEnding(index)}>
+                            <X className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        {/* 结局标题 */}
+                        <div className="space-y-2">
+                          <Label>结局标题 *</Label>
+                          <Input
+                            value={ending.title}
+                            onChange={(e) => updateEnding(index, 'title', e.target.value)}
+                            placeholder="例如：诗仙传世"
+                          />
+                        </div>
 
-                      <div className="space-y-2">
-                        <Label>结局标题 *</Label>
-                        <Input
-                          value={ending.title}
-                          onChange={(e) => updateEnding(index, 'title', e.target.value)}
-                          placeholder="例如：诗仙传世"
-                        />
-                      </div>
+                        {/* 结局描述 */}
+                        <div className="space-y-2">
+                          <Label>结局描述 *</Label>
+                          <Textarea
+                            value={ending.description}
+                            onChange={(e) => updateEnding(index, 'description', e.target.value)}
+                            placeholder="描述这个结局的情景和成就..."
+                            rows={3}
+                          />
+                        </div>
 
-                      <div className="space-y-2">
-                        <Label>结局描述 *</Label>
-                        <Textarea
-                          value={ending.description}
-                          onChange={(e) => updateEnding(index, 'description', e.target.value)}
-                          placeholder="描述这个结局..."
-                          rows={2}
-                        />
-                      </div>
+                        {/* 成就等级 */}
+                        <div className="space-y-2">
+                          <Label>成就等级 *</Label>
+                          <Select
+                            value={ending.achievement_level}
+                            onValueChange={(value) => updateEnding(index, 'achievement_level', value)}
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="legendary">
+                                <span className="flex items-center gap-2">
+                                  <span className="text-chart-1">⭐⭐⭐⭐⭐</span>
+                                  <span>传奇</span>
+                                </span>
+                              </SelectItem>
+                              <SelectItem value="excellent">
+                                <span className="flex items-center gap-2">
+                                  <span className="text-chart-2">⭐⭐⭐⭐</span>
+                                  <span>卓越</span>
+                                </span>
+                              </SelectItem>
+                              <SelectItem value="good">
+                                <span className="flex items-center gap-2">
+                                  <span className="text-chart-3">⭐⭐⭐</span>
+                                  <span>良好</span>
+                                </span>
+                              </SelectItem>
+                              <SelectItem value="ordinary">
+                                <span className="flex items-center gap-2">
+                                  <span className="text-muted-foreground">⭐⭐</span>
+                                  <span>普通</span>
+                                </span>
+                              </SelectItem>
+                              <SelectItem value="poor">
+                                <span className="flex items-center gap-2">
+                                  <span className="text-destructive">⭐</span>
+                                  <span>困顿</span>
+                                </span>
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <p className="text-xs text-muted-foreground">
+                            成就等级决定结局的评价和显示效果
+                          </p>
+                        </div>
 
-                      <div className="space-y-2">
-                        <Label>成就等级 *</Label>
-                        <Select
-                          value={ending.achievement_level}
-                          onValueChange={(value) => updateEnding(index, 'achievement_level', value)}
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="legendary">传奇</SelectItem>
-                            <SelectItem value="excellent">卓越</SelectItem>
-                            <SelectItem value="good">良好</SelectItem>
-                            <SelectItem value="ordinary">普通</SelectItem>
-                            <SelectItem value="poor">困顿</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <p className="text-xs text-muted-foreground">
-                        触发条件：在提交前可以在代码中设置
-                      </p>
-                    </div>
-                  </Card>
-                ))}
+                        {/* 触发条件 */}
+                        <div className="space-y-2">
+                          <Label>触发条件 *</Label>
+                          <p className="text-xs text-muted-foreground">
+                            设置属性的最低要求，满足所有条件才能触发此结局。建议至少设置1-2个条件。
+                          </p>
+                          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 p-3 bg-muted/30 rounded-lg">
+                            {availableAttributes.map(attr => (
+                              <div key={attr} className="flex items-center gap-2">
+                                <Label className="text-xs whitespace-nowrap min-w-12">{attr}≥</Label>
+                                <Input
+                                  type="number"
+                                  value={ending.conditions[attr] || ''}
+                                  onChange={(e) => {
+                                    const conditions = { ...ending.conditions };
+                                    const val = parseInt(e.target.value) || 0;
+                                    if (val > 0) {
+                                      conditions[attr] = val;
+                                    } else {
+                                      delete conditions[attr];
+                                    }
+                                    updateEnding(index, 'conditions', conditions);
+                                  }}
+                                  placeholder="0"
+                                  className="h-8"
+                                  min={0}
+                                  max={100}
+                                />
+                              </div>
+                            ))}
+                          </div>
+                          {Object.keys(ending.conditions).length > 0 && (
+                            <div className="text-xs text-muted-foreground p-2 bg-background rounded">
+                              <strong>当前条件：</strong>
+                              {Object.entries(ending.conditions).map(([attr, val]) => (
+                                <span key={attr} className="ml-2">
+                                  {attr}≥{val}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
               </div>
 
               {endings.length === 0 && (
