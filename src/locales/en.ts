@@ -57,6 +57,8 @@ export const en: TranslationKeys = {
     健康: 'Health',
     诗才: 'Poetry Talent',
     仕途: 'Official Career',
+    画技: 'Painting Skills',
+    艺术声望: 'Artistic Reputation',
   },
 
   // Life stages
