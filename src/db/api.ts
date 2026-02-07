@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { supabase, getSupabaseWithUser } from './supabase';
 import type { CultureTemplate, Event, Ending, CreationRating, GameSession } from '@/types/game';
 
 // 获取所有已批准的文化模板
@@ -122,7 +122,8 @@ export async function getGameStats() {
 
 // 创建文化模板
 export async function createCultureTemplate(culture: Omit<CultureTemplate, 'id' | 'created_at' | 'updated_at'>) {
-  const { data, error } = await supabase
+  const client = getSupabaseWithUser();
+  const { data, error } = await client
     .from('culture_templates')
     .insert({
       ...culture,
@@ -138,7 +139,8 @@ export async function createCultureTemplate(culture: Omit<CultureTemplate, 'id' 
 
 // 创建事件
 export async function createEvent(event: Omit<Event, 'id' | 'created_at' | 'updated_at'>) {
-  const { data, error } = await supabase
+  const client = getSupabaseWithUser();
+  const { data, error } = await client
     .from('events')
     .insert({
       ...event,
@@ -154,7 +156,8 @@ export async function createEvent(event: Omit<Event, 'id' | 'created_at' | 'upda
 
 // 创建结局
 export async function createEnding(ending: Omit<Ending, 'id' | 'created_at' | 'updated_at'>) {
-  const { data, error } = await supabase
+  const client = getSupabaseWithUser();
+  const { data, error } = await client
     .from('endings')
     .insert({
       ...ending,
@@ -170,10 +173,11 @@ export async function createEnding(ending: Omit<Ending, 'id' | 'created_at' | 'u
 
 // 获取用户的创作内容
 export async function getUserCreations(userId: string) {
+  const client = getSupabaseWithUser();
   const [cultures, events, endings] = await Promise.all([
-    supabase.from('culture_templates').select('*').eq('creator_id', userId).order('created_at', { ascending: false }),
-    supabase.from('events').select('*, culture:culture_templates(name)').eq('creator_id', userId).order('created_at', { ascending: false }),
-    supabase.from('endings').select('*, culture:culture_templates(name)').eq('creator_id', userId).order('created_at', { ascending: false })
+    client.from('culture_templates').select('*').eq('creator_id', userId).order('created_at', { ascending: false }),
+    client.from('events').select('*, culture:culture_templates(name)').eq('creator_id', userId).order('created_at', { ascending: false }),
+    client.from('endings').select('*, culture:culture_templates(name)').eq('creator_id', userId).order('created_at', { ascending: false })
   ]);
 
   return {
@@ -234,9 +238,10 @@ export async function reviewContent(
   id: string,
   status: 'approved' | 'rejected'
 ) {
+  const client = getSupabaseWithUser();
   const tableName = type === 'culture' ? 'culture_templates' : type === 'event' ? 'events' : 'endings';
   
-  const { error } = await supabase
+  const { error } = await client
     .from(tableName)
     .update({ status })
     .eq('id', id);
@@ -249,9 +254,10 @@ export async function deleteCreation(
   type: 'culture' | 'event' | 'ending',
   id: string
 ) {
+  const client = getSupabaseWithUser();
   const tableName = type === 'culture' ? 'culture_templates' : type === 'event' ? 'events' : 'endings';
   
-  const { error } = await supabase
+  const { error } = await client
     .from(tableName)
     .delete()
     .eq('id', id);
